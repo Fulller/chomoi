@@ -29,10 +29,10 @@ public class Address {
     String detail;
 
     @Column(name = "adr_receiver_name", nullable = false)
-    String receiver_name;
+    String receiverName;
 
     @Column(name = "adr_receiver_phone", nullable = false)
-    String receiver_phone;
+    String receiverPhone;
 
     @OneToOne(mappedBy = "address")
     Shop shop;
