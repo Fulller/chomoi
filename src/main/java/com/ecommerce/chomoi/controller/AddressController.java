@@ -59,11 +59,21 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/isDefault/{id}")
+    public ResponseEntity<ApiResponse<AddressResponse>> updateIsDefault(@PathVariable String id){
+        ApiResponse<AddressResponse> apiResponse = ApiResponse.<AddressResponse>builder()
+                .code("address-s-05")
+                .message("Update default address successfully")
+                .data(addressService.updateIsDefault(id))
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @DeleteMapping("/{id}")
     ResponseEntity<ApiResponse<Void>> delete(@PathVariable String id){
         addressService.delete(id);
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
-                .code("address-s-05")
+                .code("address-s-06")
                 .message("Delete address successfully")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);

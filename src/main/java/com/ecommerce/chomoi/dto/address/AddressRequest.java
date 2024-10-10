@@ -23,6 +23,8 @@ public class AddressRequest {
     @NotBlank(message = "Detail is required")
     String detail;
 
+    Boolean isDefault;
+
     @NotBlank(message = "Receiver Name is required")
     String receiverName;
 
