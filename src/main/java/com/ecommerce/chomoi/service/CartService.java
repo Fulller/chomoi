@@ -47,7 +47,7 @@ public class CartService {
         });
 
         // Handle cart items and create message based on cart contents
-        Set<CartItemResponse> cartItemResponses = cart.getCartItems().isEmpty()
+        Set<CartItemResponse> cartItemResponses = (cart.getCartItems() == null || cart.getCartItems().isEmpty())
                 ? Set.of()  // If cart items are empty, return an empty set
                 : cart.getCartItems().stream()
                 .map(cartItemMapper::toCartItemResponse)
