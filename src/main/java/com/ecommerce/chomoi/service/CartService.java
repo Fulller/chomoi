@@ -26,7 +26,7 @@ public class CartService {
     CartRepository cartRepository;
     CartItemMapper cartItemMapper;
     SecurityUtil securityUtil;
-    AccountRepository accountRepository; // Optional, if you need to validate or fetch account details
+    AccountRepository accountRepository;
 
     public CartResponse get() {
         String accountId = securityUtil.getAccountId();  // Get the logged-in user's account ID
@@ -46,18 +46,17 @@ public class CartService {
             return cartRepository.save(newCart);
         });
 
-        // If cart has no items, return a success message with empty cartItems
+        // Handle cart items and create message based on cart contents
         Set<CartItemResponse> cartItemResponses = cart.getCartItems().isEmpty()
                 ? Set.of()  // If cart items are empty, return an empty set
                 : cart.getCartItems().stream()
                 .map(cartItemMapper::toCartItemResponse)
                 .collect(Collectors.toSet());
 
-        // Return a CartResponse containing CartId and CartItems
+        // Return the CartResponse
         return CartResponse.builder()
                 .id(cart.getId())
                 .cartItems(cartItemResponses)
-                .message(cart.getCartItems().isEmpty() ? "Cart is empty" : "Cart retrieved successfully")
                 .build();
     }
 }

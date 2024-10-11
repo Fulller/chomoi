@@ -27,7 +27,7 @@ public class CartController {
         // Return the cart data in ApiResponse
         ApiResponse<CartResponse> apiResponse = ApiResponse.<CartResponse>builder()
                 .code("cart-s-01")
-                .message(cartResponse.getMessage())  // Include the message from the CartResponse
+                .message("Get cart successfully")
                 .data(cartResponse)
                 .build();
 

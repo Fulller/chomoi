@@ -14,5 +14,4 @@ import java.util.Set;
 public class CartResponse {
     String id;
     Set<CartItemResponse> cartItems;
-    String message;
 }
