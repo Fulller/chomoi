@@ -152,5 +152,12 @@ public class AuthController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    @PostMapping("/upgrade-to-shop")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> upgradeToShop(@PathVariable String accountId, @RequestBody AuthUpgradeToShop upgradeToShopDto) {
+        String response = authService.upgradeToShop(accountId, upgradeToShopDto);
+        return ResponseEntity.ok(response);
+    }
 }
 

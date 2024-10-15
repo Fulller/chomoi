@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -55,5 +54,17 @@ public class Shop {
     void onCreate() {
         this.status = ShopStatus.ACTIVE;
     }
+
+	public String getId() {
+		return id;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
 
 }

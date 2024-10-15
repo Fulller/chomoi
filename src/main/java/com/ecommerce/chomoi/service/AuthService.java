@@ -5,20 +5,26 @@ import com.ecommerce.chomoi.dto.jwt.JWTPayloadDto;
 import com.ecommerce.chomoi.entities.Account;
 import com.ecommerce.chomoi.enums.Role;
 import com.ecommerce.chomoi.entities.RefreshToken;
+import com.ecommerce.chomoi.entities.Shop;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.mapper.AccountMapper;
 import com.ecommerce.chomoi.repository.AccountRepository;
+import com.ecommerce.chomoi.repository.ShopRepository;
 import com.ecommerce.chomoi.repository.RefreshTokenRepository;
+import com.ecommerce.chomoi.repository.ShopRepository;
 import com.ecommerce.chomoi.util.PasswordUtil;
 import com.ecommerce.chomoi.util.jwt.AccessTokenUtil;
 import com.ecommerce.chomoi.util.jwt.RefreshTokenUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -183,5 +189,34 @@ public class AuthService {
                         () -> new AppException(HttpStatus.NOT_FOUND, "Account not found", "auth-e-05")
                 );
         return accountMapper.toAccountInfo(Account);
+    }
+    
+    @Autowired
+    private ShopRepository shopRepository;
+
+    public String upgradeToShop(String accountId, AuthUpgradeToShop upgradeToShopDto) {
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            
+            if (account.getRoles().contains(Role.SHOP)) {
+                return "Account already has shop role.";
+            }
+            
+            account.getRoles().add(Role.SHOP);
+            accountRepository.save(account);
+            
+            Shop shop = Shop.builder()
+                    .name(upgradeToShopDto.getShopName())
+                    .account(account)
+                    .build();
+            
+            shopRepository.save(shop);
+            
+            return "Account upgraded to shop successfully.";
+        } else {
+            return "Account not found.";
+        }
     }
 }
