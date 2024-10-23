@@ -41,7 +41,8 @@ public class AuthController {
         authService.register(request);
         String verificationCode = UUID.randomUUID().toString();
         codeUtil.save(verificationCode, request, 1);
-        emailService.sendEmailToVerifyRegister(request.getEmail(), verificationCode);
+        String pathEmailTemplateVerifyRegister = "src/main/resources/email_template_verify_register.html";
+        emailService.sendEmailToVerifyRegister(request.getEmail(), verificationCode, pathEmailTemplateVerifyRegister);
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code("auth-s-01")
                 .message("Request register successfully, check your email")
@@ -54,7 +55,8 @@ public class AuthController {
         AuthRegisterRequest request =  codeUtil.get(verificationCode);
         AuthResponse authResponse = authService.verifyRegister(request);
         codeUtil.remove(verificationCode);
-        emailService.sendEmailToWelcome(request.getEmail());
+        String pathEmailTemplateWelcome = "src/main/resources/email_template_welcome.html";
+        emailService.sendEmailToWelcome(request.getEmail(), pathEmailTemplateWelcome);
         String redirectUrl = UriComponentsBuilder.fromUriString(clientReceiveTokensPath)
                 .queryParam("accessToken", authResponse.getAccessToken())
                 .queryParam("refreshToken", authResponse.getRefreshToken())
@@ -121,7 +123,8 @@ public class AuthController {
         authService.forgotPassword(request);
         String verificationCode = CommonUtil.generateVerificationCode();
         forgotPasswordCodeUtil.save(CommonUtil.getForgotPasswordKey(verificationCode), request.getEmail(), 1);
-        emailService.sendEmailToVerifyForgotPassword(request.getEmail(), verificationCode);
+        String pathEmailTemplateVerifyForgotPasswordCode = "src/main/resources/email_template_verify_forgot_password_code.html";
+        emailService.sendEmailToVerifyForgotPassword(request.getEmail(), verificationCode, pathEmailTemplateVerifyForgotPasswordCode);
         ApiResponse<Void> apiResponse =  ApiResponse.<Void>builder()
                 .code("auth-s-08")
                 .message("Request to get new password successfully, please check your email")
