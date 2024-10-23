@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthUpgradeToShop {
     @NotBlank(message = "Shop name is required")
-    private String shopName;
+    private String name;
 }

@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface ShopRepository extends JpaRepository<Shop, String> {
     Optional<Shop> findByAccount(Account account);
+    Optional<Shop> findByAccountId(String accountId);
 }

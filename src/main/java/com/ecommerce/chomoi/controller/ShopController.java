@@ -2,6 +2,10 @@ package com.ecommerce.chomoi.controller;
 
 import java.util.List;
 
+import com.cloudinary.Api;
+import com.ecommerce.chomoi.dto.shop.ShopResponse;
+import com.ecommerce.chomoi.exception.AppException;
+import com.ecommerce.chomoi.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,36 +31,33 @@ import com.ecommerce.chomoi.util.jwt.BaseJWTUtil;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/shops")
+@RequestMapping("/api/shops")
 public class ShopController {
 
     @Autowired
     private ShopService shopService;
 
-    @Autowired
-    private AccountService accountService;
-
-    @PostMapping
-    public ResponseEntity<Shop> addShop(@RequestBody Shop shop, @RequestParam String accountId) {
-        Account account = accountService.getAccountById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found."));
-
-        Shop createdShop = shopService.createShop(shop, account)
-                .orElseThrow(() -> new RuntimeException("Shop could not be created."));
-        return ResponseEntity.ok(createdShop);
-    }
-    
-    @PutMapping
-    public ResponseEntity<Shop> updateShop(@RequestBody Shop shop) {
-        Shop updatedShop = shopService.createShop(shop, shop.getAccount())
-                .orElseThrow(() -> new RuntimeException("Shop could not be updated."));
-        return ResponseEntity.ok(updatedShop);
-    }
+    private SecurityUtil securityUtil;
 
     @GetMapping("/{shopId}")
-    public ResponseEntity<Shop> getShop(@PathVariable String shopId) {
-        Shop shop = shopService.getShopById(shopId)
-                .orElseThrow(() -> new RuntimeException("Shop not found."));
-        return ResponseEntity.ok(shop);
+    public ResponseEntity<ApiResponse<ShopResponse>> getShop(@PathVariable String shopId) {
+        ShopResponse shop = shopService.getShopById(shopId);
+        ApiResponse<ShopResponse> response = ApiResponse.<ShopResponse>builder()
+                .code("shop-s-01")
+                .message("Get shop successfully")
+                .data(shop)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/owner")
+    public ResponseEntity<ApiResponse<ShopResponse>> getShopByOwner(){
+        ShopResponse shop = shopService.getShopByOwner();
+        ApiResponse<ShopResponse> response = ApiResponse.<ShopResponse>builder()
+                .code("shop-s-02")
+                .message("Get shop by owner successfully")
+                .data(shop)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

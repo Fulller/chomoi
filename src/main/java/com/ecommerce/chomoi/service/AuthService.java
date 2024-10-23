@@ -2,19 +2,24 @@ package com.ecommerce.chomoi.service;
 
 import com.ecommerce.chomoi.dto.auth.*;
 import com.ecommerce.chomoi.dto.jwt.JWTPayloadDto;
+import com.ecommerce.chomoi.dto.shop.ShopResponse;
 import com.ecommerce.chomoi.entities.Account;
 import com.ecommerce.chomoi.enums.Role;
 import com.ecommerce.chomoi.entities.RefreshToken;
 import com.ecommerce.chomoi.entities.Shop;
+import com.ecommerce.chomoi.enums.ShopStatus;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.mapper.AccountMapper;
+import com.ecommerce.chomoi.mapper.ShopMapper;
 import com.ecommerce.chomoi.repository.AccountRepository;
 import com.ecommerce.chomoi.repository.ShopRepository;
 import com.ecommerce.chomoi.repository.RefreshTokenRepository;
 import com.ecommerce.chomoi.repository.ShopRepository;
+import com.ecommerce.chomoi.security.SecurityUtil;
 import com.ecommerce.chomoi.util.PasswordUtil;
 import com.ecommerce.chomoi.util.jwt.AccessTokenUtil;
 import com.ecommerce.chomoi.util.jwt.RefreshTokenUtil;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,6 +42,10 @@ public class AuthService {
     AccessTokenUtil accessTokenUtil;
     RefreshTokenUtil refreshTokenUtil;
     RefreshTokenRepository refreshTokenRepository;
+    SecurityUtil securityUtil;
+    ShopRepository shopRepository;
+    ShopMapper shopMapper;
+
 
     public void register(AuthRegisterRequest request) {
         boolean existedAccount = accountRepository.existsByEmailAndIsLocalTrue(request.getEmail());
@@ -190,33 +199,21 @@ public class AuthService {
                 );
         return accountMapper.toAccountInfo(Account);
     }
-    
-    @Autowired
-    private ShopRepository shopRepository;
 
-    public String upgradeToShop(String accountId, AuthUpgradeToShop upgradeToShopDto) {
-        Optional<Account> optionalAccount = accountRepository.findById(accountId);
-        
-        if (optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
-            
-            if (account.getRoles().contains(Role.SHOP)) {
-                return "Account already has shop role.";
-            }
-            
-            account.getRoles().add(Role.SHOP);
-            accountRepository.save(account);
-            
-            Shop shop = Shop.builder()
-                    .name(upgradeToShopDto.getShopName())
-                    .account(account)
-                    .build();
-            
-            shopRepository.save(shop);
-            
-            return "Account upgraded to shop successfully.";
-        } else {
-            return "Account not found.";
+    @Transactional
+    public ShopResponse upgradeShop(AuthUpgradeToShop request) {
+        Account account = securityUtil.getAccount();
+        if(account.getRoles().contains(Role.SHOP)){
+            throw new AppException(HttpStatus.CONFLICT, "Account already has role SHOP", "auth-e-06");
         }
+        account.getRoles().add(Role.SHOP);
+        accountRepository.save(account);
+        Shop shop = Shop.builder()
+                .name(request.getName())
+                .account(account)
+                .status(ShopStatus.ACTIVE)
+                .build();
+        shopRepository.save(shop);
+        return shopMapper.toShopResponse(shop);
     }
 }

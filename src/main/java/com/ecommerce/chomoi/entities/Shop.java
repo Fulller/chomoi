@@ -5,6 +5,7 @@ import com.ecommerce.chomoi.enums.ShopStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 public class Shop {
@@ -55,16 +57,16 @@ public class Shop {
         this.status = ShopStatus.ACTIVE;
     }
 
-	public String getId() {
-		return id;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
+//	public String getId() {
+//		return id;
+//	}
+//
+//	public void setAccount(Account account) {
+//		this.account = account;
+//	}
+//
+//	public Account getAccount() {
+//		return account;
+//	}
 
 }
