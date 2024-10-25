@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.cloudinary.Api;
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
+import com.ecommerce.chomoi.entities.Address;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.security.SecurityUtil;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,7 @@ public class ShopController {
 
     private SecurityUtil securityUtil;
 
+    @PermitAll
     @GetMapping("/{shopId}")
     public ResponseEntity<ApiResponse<ShopResponse>> getShop(@PathVariable String shopId) {
         ShopResponse shop = shopService.getShopById(shopId);
@@ -56,6 +59,17 @@ public class ShopController {
         ApiResponse<ShopResponse> response = ApiResponse.<ShopResponse>builder()
                 .code("shop-s-02")
                 .message("Get shop by owner successfully")
+                .data(shop)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse<ShopResponse>> updateShopInfo(String name, String avatar, String coverimage, Address address){
+        ShopResponse shop = shopService.updateShopInfo(name, avatar, coverimage, address);
+        ApiResponse<ShopResponse> response = ApiResponse.<ShopResponse>builder()
+                .code("shop-s-03")
+                .message("Update shop info successfully")
                 .data(shop)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);

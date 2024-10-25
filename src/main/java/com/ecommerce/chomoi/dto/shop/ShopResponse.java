@@ -14,6 +14,8 @@ public class ShopResponse {
 
     String avatar;
 
+    String cover_image;
+
     Double rating;
 
     ShopStatus status;

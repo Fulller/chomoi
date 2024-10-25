@@ -3,6 +3,7 @@ package com.ecommerce.chomoi.service;
 import java.util.Optional;
 
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
+import com.ecommerce.chomoi.entities.Address;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.mapper.ShopMapper;
 import com.ecommerce.chomoi.security.SecurityUtil;
@@ -32,6 +33,16 @@ public class ShopService {
 
     public ShopResponse getShopByOwner(){
         Shop shop = securityUtil.getShop();
+        return shopMapper.toShopResponse(shop);
+    }
+
+    public ShopResponse updateShopInfo(String name, String avatar, String coverimage, Address address){
+        Shop shop = securityUtil.getShop();
+        shop.setName(name);
+        shop.setAvatar(avatar);
+        shop.setCover_image(coverimage);
+        shop.setAddress(address);
+        shopRepository.save(shop);
         return shopMapper.toShopResponse(shop);
     }
 }
