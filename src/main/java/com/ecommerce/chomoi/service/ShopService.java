@@ -3,9 +3,11 @@ package com.ecommerce.chomoi.service;
 import java.util.Optional;
 
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
+import com.ecommerce.chomoi.dto.shop.ShopUpdateRequest;
 import com.ecommerce.chomoi.entities.Address;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.mapper.ShopMapper;
+import com.ecommerce.chomoi.repository.AddressRepository;
 import com.ecommerce.chomoi.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final SecurityUtil securityUtil;
     private final ShopMapper shopMapper;
+    private final AddressRepository addressRepository;
 
     public ShopResponse getShopById(String shopId) {
         Shop shop = shopRepository.findById(shopId)
@@ -36,12 +39,11 @@ public class ShopService {
         return shopMapper.toShopResponse(shop);
     }
 
-    public ShopResponse updateShopInfo(String name, String avatar, String coverimage, Address address){
+    public ShopResponse updateShopInfo(ShopUpdateRequest shopUpdateRequest){
         Shop shop = securityUtil.getShop();
-        shop.setName(name);
-        shop.setAvatar(avatar);
-        shop.setCover_image(coverimage);
-        shop.setAddress(address);
+        shop.setName(shopUpdateRequest.getName());
+        shop.setAvatar(shopUpdateRequest.getAvatar());
+        shop.setCoverImage(shopUpdateRequest.getCoverImage());
         shopRepository.save(shop);
         return shopMapper.toShopResponse(shop);
     }

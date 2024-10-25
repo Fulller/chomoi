@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +28,7 @@ public class Shop {
     String avatar;
 
     @Column(name = "shp_cover_image")
-    String cover_image;
+    String coverImage;
 
     @Column(name = "shp_rating")
     Double rating;
@@ -60,17 +59,5 @@ public class Shop {
     void onCreate() {
         this.status = ShopStatus.ACTIVE;
     }
-
-//	public String getId() {
-//		return id;
-//	}
-//
-//	public void setAccount(Account account) {
-//		this.account = account;
-//	}
-//
-//	public Account getAccount() {
-//		return account;
-//	}
 
 }

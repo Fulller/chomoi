@@ -1,7 +1,7 @@
 package com.ecommerce.chomoi.dto.shop;
 
 
-import com.ecommerce.chomoi.entities.*;
+import com.ecommerce.chomoi.entities.Address;
 import com.ecommerce.chomoi.enums.ShopStatus;
 import lombok.*;
 
@@ -14,11 +14,9 @@ public class ShopResponse {
 
     String avatar;
 
-    String cover_image;
+    String coverImage;
 
     Double rating;
 
     ShopStatus status;
-
-    Address address;
 }

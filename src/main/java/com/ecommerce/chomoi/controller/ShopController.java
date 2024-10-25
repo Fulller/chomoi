@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cloudinary.Api;
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
+import com.ecommerce.chomoi.dto.shop.ShopUpdateRequest;
 import com.ecommerce.chomoi.entities.Address;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.security.SecurityUtil;
@@ -34,6 +35,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/shops")
+@PreAuthorize("authenticated()")
 public class ShopController {
 
     @Autowired
@@ -41,7 +43,7 @@ public class ShopController {
 
     private SecurityUtil securityUtil;
 
-    @PermitAll
+    @PreAuthorize("permitAll()")
     @GetMapping("/{shopId}")
     public ResponseEntity<ApiResponse<ShopResponse>> getShop(@PathVariable String shopId) {
         ShopResponse shop = shopService.getShopById(shopId);
@@ -53,6 +55,7 @@ public class ShopController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("hasRole('SHOP')")
     @GetMapping("/owner")
     public ResponseEntity<ApiResponse<ShopResponse>> getShopByOwner(){
         ShopResponse shop = shopService.getShopByOwner();
@@ -64,9 +67,10 @@ public class ShopController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("hasRole('SHOP')")
     @PutMapping
-    public ResponseEntity<ApiResponse<ShopResponse>> updateShopInfo(String name, String avatar, String coverimage, Address address){
-        ShopResponse shop = shopService.updateShopInfo(name, avatar, coverimage, address);
+    public ResponseEntity<ApiResponse<ShopResponse>> updateShopInfo(@Valid @RequestBody ShopUpdateRequest shopUpdateRequest){
+        ShopResponse shop = shopService.updateShopInfo(shopUpdateRequest);
         ApiResponse<ShopResponse> response = ApiResponse.<ShopResponse>builder()
                 .code("shop-s-03")
                 .message("Update shop info successfully")
