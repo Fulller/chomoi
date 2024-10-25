@@ -1,11 +1,13 @@
 package com.ecommerce.chomoi.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,10 +27,15 @@ public class Attribute {
     @Column(name = "att_is_enter_by_hand")
     Boolean isEnterByHand = false;
 
+    @Column(name = "att_required")
+    Boolean required = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ctg_id")
+    @JsonBackReference
     Category category;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute",orphanRemoval = true)
-    Set<AttributeOption> options = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attribute", orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    List<AttributeOption> options = new ArrayList<>();
 }
