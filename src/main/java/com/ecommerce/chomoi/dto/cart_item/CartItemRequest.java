@@ -18,5 +18,5 @@ import lombok.experimental.FieldDefaults;
 public class CartItemRequest {
     //CartItemId id;
     String skuId;
-    String quantity;
+    int quantity;
 }
