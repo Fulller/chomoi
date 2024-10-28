@@ -4,7 +4,6 @@ import com.ecommerce.chomoi.dto.cart_item.CartItemResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -12,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CartResponse {
+public class CartRequest {
     String id;
-    List<CartItemResponse> cartItems;
+    Set<CartItemResponse> cartItems;
 }

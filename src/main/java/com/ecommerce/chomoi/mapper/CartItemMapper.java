@@ -1,5 +1,6 @@
 package com.ecommerce.chomoi.mapper;
 
+import com.ecommerce.chomoi.dto.cart_item.CartItemRequest;
 import com.ecommerce.chomoi.dto.cart_item.CartItemResponse;
 import com.ecommerce.chomoi.entities.CartItem;
 import org.mapstruct.Mapper;
@@ -15,4 +16,5 @@ public interface CartItemMapper {
     @Mapping(target = "stock", source = "sku.stock")
     @Mapping(target = "image", source = "sku.image")
     CartItemResponse toCartItemResponse(CartItem cartItem);
+    CartItem toCartItem (CartItemRequest request);
 }
