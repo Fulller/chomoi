@@ -25,7 +25,7 @@ public class Product {
     @Column(name = "prd_name", nullable = false)
     String name;
 
-    @Column(name = "prd_description", nullable = false)
+    @Column(name = "prd_description", nullable = false, columnDefinition = "TEXT")
     String description;
 
     @Column(name = "prd_rating")

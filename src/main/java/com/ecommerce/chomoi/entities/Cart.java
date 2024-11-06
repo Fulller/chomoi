@@ -1,5 +1,6 @@
 package com.ecommerce.chomoi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,5 +27,6 @@ public class Cart {
     Account account;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "cart", orphanRemoval = true)
+    @JsonIgnore
     List<CartItem> cartItems = new ArrayList<>();
 }
