@@ -61,23 +61,11 @@ public class CartController {
 
     @DeleteMapping("/{sku_id}")
     public ResponseEntity<ApiResponse<CartItemResponse>> deleteCartItem(@PathVariable("sku_id") String sku_id) {
-        try {
-            System.out.println("Deleting CartItem with sku_id: " + sku_id); // Log thông tin xóa
             cartItemService.deleteCartItem(sku_id);
-            System.out.println("Deleted CartItem with sku_id: " + sku_id);
             ApiResponse<CartItemResponse> apiResponse = ApiResponse.<CartItemResponse>builder()
                     .code("cart-s-03")
                     .message("Deleted item successfully!")
                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-        } catch (Exception e) {
-            ApiResponse<CartItemResponse> errorResponse = ApiResponse.<CartItemResponse>builder()
-                    .success(false)
-                    .code("cart-e-01")
-                    .message("Error deleting item: " + e.getMessage())
-                    .build();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-
-        }
     }
 }
