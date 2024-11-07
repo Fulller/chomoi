@@ -17,10 +17,10 @@ public class Review {
     @Column(name = "rvw_id")
     String id;
 
-    @Column(name = "rvw_rating", nullable = false)
+    @Column(name = "rvw_rating")
     String rating;
 
-    @Column(name = "rvw_comment", nullable = false)
+    @Column(name = "rvw_comment")
     String comment;
 
     @Column(name = "rvw_response")
