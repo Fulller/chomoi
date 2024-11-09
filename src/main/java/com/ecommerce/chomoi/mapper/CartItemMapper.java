@@ -20,6 +20,8 @@ public interface CartItemMapper {
     @Mapping(target = "image", source = "sku.image")
     @Mapping(target = "product", source = "sku.product")
     @Mapping(target = "shop", source = "sku.product.shop")
+    @Mapping(target = "cartItemId.cartId", source = "id.cartId")
+    @Mapping(target = "cartItemId.skuId", source = "id.skuId")
     CartItemResponse toCartItemResponse(CartItem cartItem);
     CartItem toCartItem (CartItemRequest request);
 }

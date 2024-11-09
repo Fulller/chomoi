@@ -4,6 +4,7 @@ import com.ecommerce.chomoi.dto.product.ProductResponse;
 import com.ecommerce.chomoi.dto.product.ProductTagResponse;
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
 import com.ecommerce.chomoi.entities.*;
+import com.ecommerce.chomoi.entities.embeddedIds.CartItemId;
 import com.ecommerce.chomoi.enums.ProductStatus;
 import com.ecommerce.chomoi.enums.ShopStatus;
 import lombok.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItemResponse {
+    CartItemId cartItemId;
     String skuId;             // SKU ID from CartItem
     String productSlug;       // Slug of the product
     int quantity;          // Quantity of the CartItem
