@@ -1,7 +1,11 @@
 package com.ecommerce.chomoi.dto.order;
 
+import com.ecommerce.chomoi.entities.embeddedIds.CartItemId;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -29,11 +33,7 @@ public class OrderRequest {
     @Data
     public static class OrderItemDTO {
 
-        @NotBlank(message = "SKU is required")
-        String skuId;
-
-        @NotNull(message = "Quantity is required")
-        @Min(value = 0, message = "Quantity must be a non-negative number")
-        int quantity;
+        @NotNull(message = "CartItemId is required")
+        CartItemId cartItemId;
     }
 }

@@ -85,11 +85,11 @@ public class OrderController {
 
     @PreAuthorize("hasRole('SHOP')")
     @PutMapping("/{id}/shop")
-    public ResponseEntity<ApiResponse<OrderResponse>> updateOrderStatus(@PathVariable String id, @RequestBody @Valid OrderStatusRequest request) {
+    public ResponseEntity<ApiResponse<OrderResponse>> shopUpdateOrderStatus(@PathVariable String id, @RequestBody @Valid OrderStatusRequest request) {
         ApiResponse<OrderResponse> apiResponse = ApiResponse.<OrderResponse>builder()
                 .code("order-s-07")
                 .message("Update order status successfully")
-                .data(orderService.updateOrderStatus(id, request))
+                .data(orderService.shopUpdateOrderStatus(id, request))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -101,6 +101,16 @@ public class OrderController {
                 .code("order-s-08")
                 .message("Get orders of shop successfully")
                 .data(orderService.getListOrderByStatusOfShop(status))
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PutMapping("/{id}/user")
+    public ResponseEntity<ApiResponse<OrderResponse>> userUpdateOrderStatus(@PathVariable String id, @RequestBody @Valid OrderStatusRequest request) {
+        ApiResponse<OrderResponse> apiResponse = ApiResponse.<OrderResponse>builder()
+                .code("order-s-09")
+                .message("You updated order status successfully")
+                .data(orderService.userUpdateOrderStatus(id, request))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

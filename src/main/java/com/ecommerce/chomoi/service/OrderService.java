@@ -8,10 +8,7 @@ import com.ecommerce.chomoi.entities.embeddedIds.OrderItemId;
 import com.ecommerce.chomoi.enums.OrderStatus;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.mapper.OrderMapper;
-import com.ecommerce.chomoi.repository.AddressRepository;
-import com.ecommerce.chomoi.repository.OrderRepository;
-import com.ecommerce.chomoi.repository.SKURepository;
-import com.ecommerce.chomoi.repository.ShopRepository;
+import com.ecommerce.chomoi.repository.*;
 import com.ecommerce.chomoi.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +28,7 @@ public class OrderService {
     private final AddressRepository addressRepository;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final CartItemRepository cartItemRepository;
 
     public OrderResponse createOrder(OrderRequest request) {
 
@@ -62,24 +60,26 @@ public class OrderService {
         order = orderRepository.save(order);
 
         for (OrderRequest.OrderItemDTO orderItemDTO : request.getItems()) {
-            SKU sku = skuRepository.findById(orderItemDTO.getSkuId()).orElseThrow(
-                    () -> new AppException(HttpStatus.NOT_FOUND, "SKU not found", "SKU-e-01")
+            CartItem cartItem = cartItemRepository.findById(orderItemDTO.getCartItemId()).orElseThrow(
+                    () -> new AppException(HttpStatus.NOT_FOUND, "Cart item not found", "cart-item-e-01")
             );
-            totalQuantity = orderItemDTO.getQuantity();
-            sku.setStock(sku.getStock() - orderItemDTO.getQuantity());
+            totalQuantity = cartItem.getQuantity();
+            SKU sku = cartItem.getSku();
+            sku.setStock(sku.getStock() - cartItem.getQuantity());
             skuRepository.save(sku);
-            totalPrice = totalPrice.add(sku.getPrice().multiply(BigDecimal.valueOf(orderItemDTO.getQuantity())));
+            totalPrice = totalPrice.add(sku.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
             OrderItemId orderItemId = OrderItemId.builder()
                     .orderId(order.getId())
                     .skuId(sku.getId())
                     .build();
             OrderItem orderItem = OrderItem.builder()
                     .sku(sku)
-                    .quantity(orderItemDTO.getQuantity())
+                    .quantity(cartItem.getQuantity())
                     .order(order)
                     .id(orderItemId)
                     .build();
             orderItems.add(orderItem);
+            cartItemRepository.deleteById(orderItemDTO.getCartItemId());
         }
         order.setTotalQuantity(totalQuantity);
         order.setTotalPrice(totalPrice);
@@ -149,7 +149,7 @@ public class OrderService {
         return orderMapper.toListOrderResponse(orders);
     }
 
-    public OrderResponse updateOrderStatus(String id, OrderStatusRequest request) {
+    public OrderResponse shopUpdateOrderStatus(String id, OrderStatusRequest request) {
 
         List<OrderStatus> statuses = List.of(
                 OrderStatus.PENDING,
@@ -169,6 +169,36 @@ public class OrderService {
 
         order.setStatus(status);
 
+        orderRepository.save(order);
+
+        return orderMapper.toOrderResponse(order);
+    }
+
+    public OrderResponse userUpdateOrderStatus(String id, OrderStatusRequest request) {
+
+        List<OrderStatus> statuses = List.of(
+                OrderStatus.RECEIVED
+        );
+
+        Order order = orderRepository.findById(id).orElseThrow(
+                () -> new AppException(HttpStatus.NOT_FOUND, "Order not found", "order-e-2")
+        );
+        OrderStatus status = request.getStatus();
+
+        if (!statuses.contains(status)) {
+            throw new AppException(HttpStatus.FORBIDDEN, "You don't have permission to edit orders to this status.", "order-e-3");
+        }
+
+        order.setStatus(status);
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            SKU sku = orderItem.getSku();
+            Review review = Review.builder()
+                    .sku(sku)
+                    .order(order)
+                    .build();
+            order.getReviews().add(review);
+        }
         orderRepository.save(order);
 
         return orderMapper.toOrderResponse(order);
