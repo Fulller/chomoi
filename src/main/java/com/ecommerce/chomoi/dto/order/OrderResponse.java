@@ -3,6 +3,7 @@ package com.ecommerce.chomoi.dto.order;
 import com.ecommerce.chomoi.dto.account.AccountResponse;
 import com.ecommerce.chomoi.dto.address.AddressResponse;
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
+import com.ecommerce.chomoi.entities.Review;
 import com.ecommerce.chomoi.entities.SKU;
 import com.ecommerce.chomoi.entities.Variation;
 import com.ecommerce.chomoi.entities.embeddedIds.OrderItemId;
@@ -35,6 +36,8 @@ public class OrderResponse {
         int quantity;
 
         SKU sku;
+
+        Review review;
 
         OrderItemProductResponseDTO product;
 
