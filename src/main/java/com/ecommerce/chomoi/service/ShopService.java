@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
 import com.ecommerce.chomoi.dto.shop.ShopUpdateRequest;
 import com.ecommerce.chomoi.entities.Address;
+import com.ecommerce.chomoi.enums.ShopStatus;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.mapper.ShopMapper;
 import com.ecommerce.chomoi.repository.AddressRepository;
@@ -44,6 +45,29 @@ public class ShopService {
         shop.setName(shopUpdateRequest.getName());
         shop.setAvatar(shopUpdateRequest.getAvatar());
         shop.setCoverImage(shopUpdateRequest.getCoverImage());
+        shopRepository.save(shop);
+        return shopMapper.toShopResponse(shop);
+    }
+
+    public ShopResponse changeShopStatus(ShopStatus shopStatusRequest){
+        Shop shop = securityUtil.getShop();
+        ShopStatus currentStatus = shop.getStatus();
+        switch (currentStatus) {
+            case ACTIVE: {
+                if (shopStatusRequest != ShopStatus.SELF_BLOCKED) {
+                    throw new AppException(HttpStatus.BAD_REQUEST, "Status ACTIVE cannt change to different status SELF_BLOCKED", "shop-e-02");
+                }
+                shop.setStatus(shopStatusRequest);
+                break;
+            }
+            case SELF_BLOCKED: {
+                if (shopStatusRequest != ShopStatus.ACTIVE) {
+                    throw new AppException(HttpStatus.BAD_REQUEST, "Status SELF_BLOCKED cannt change to different status ACTIVE", "shop-e-03");
+                }
+                shop.setStatus(shopStatusRequest);
+                break;
+            }
+        }
         shopRepository.save(shop);
         return shopMapper.toShopResponse(shop);
     }

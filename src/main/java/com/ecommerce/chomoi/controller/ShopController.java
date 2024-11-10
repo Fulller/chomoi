@@ -3,9 +3,11 @@ package com.ecommerce.chomoi.controller;
 import java.util.List;
 
 import com.cloudinary.Api;
+import com.ecommerce.chomoi.dto.shop.ShopChangeStatusRequest;
 import com.ecommerce.chomoi.dto.shop.ShopResponse;
 import com.ecommerce.chomoi.dto.shop.ShopUpdateRequest;
 import com.ecommerce.chomoi.entities.Address;
+import com.ecommerce.chomoi.enums.ShopStatus;
 import com.ecommerce.chomoi.exception.AppException;
 import com.ecommerce.chomoi.security.SecurityUtil;
 import jakarta.annotation.security.PermitAll;
@@ -74,6 +76,17 @@ public class ShopController {
         ApiResponse<ShopResponse> response = ApiResponse.<ShopResponse>builder()
                 .code("shop-s-03")
                 .message("Update shop info successfully")
+                .data(shop)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    @PreAuthorize("hasRole('SHOP')")
+    @PutMapping("/changeShopStatus")
+    public ResponseEntity<ApiResponse<ShopResponse>> changeStatus(@Valid @RequestBody ShopChangeStatusRequest shopChangeStatusRequest){
+        ShopResponse shop = shopService.changeShopStatus(shopChangeStatusRequest.getStatus());
+        ApiResponse<ShopResponse> response = ApiResponse.<ShopResponse>builder()
+                .code("shop-s-04")
+                .message("Change shop status successfully")
                 .data(shop)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
