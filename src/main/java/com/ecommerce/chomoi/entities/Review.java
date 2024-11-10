@@ -19,7 +19,7 @@ public class Review {
     String id;
 
     @Column(name = "rvw_rating")
-    String rating;
+    Integer rating;
 
     @Column(name = "rvw_comment")
     String comment;
